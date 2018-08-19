@@ -21,7 +21,7 @@ connection.connect(function (err) {
 function start() {
     connection.query("SELECT * FROM bamazon_DB.products", function (err, res) {
         if (err) throw err;
-        // Log all results of the SELECT statement
+        // console log table
         console.table(res);
 
         inquirer
@@ -47,16 +47,20 @@ function start() {
                         chosenItem = res[i];
                     }
                 }
-                // console.log(chosenItem);
+           
                 //determine if enough items are in stock
+                //if insufficient quantity, display message and restart
                 if (parseInt(answer.units) > chosenItem.stock_quantity) {
                     console.log("Insufficient quantity!");
                     start();
                 }
                 else {
+                    //calculate price for x number of items at y price
                     var totalPrice = parseInt(answer.units) * chosenItem.price;
-                    // console.log("You have successfully purchased " + answer.units + " " + chosenItem.product_name + " for " + totalPrice + " dollars.");
+                    //calculate updated quantity after purchase
                     var newQuantity = chosenItem.stock_quantity - answer.units;
+
+                    //update products table
                     connection.query(
                         "UPDATE bamazon_DB.products SET ? WHERE ?",
                         [
@@ -69,6 +73,7 @@ function start() {
                         ],
                         function (error) {
                             if (error) throw err;
+                            //console log successful purchase and restart
                             console.log("You have successfully purchased " + answer.units + " " + chosenItem.product_name + " for " + totalPrice + " dollars.");
                             start();
                         }
