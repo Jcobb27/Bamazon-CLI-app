@@ -147,6 +147,7 @@ function addToInventory() {
 }
 
 function newProduct() {
+    //get info from the user on what they want to add
     inquirer
         .prompt([
             {
@@ -172,7 +173,7 @@ function newProduct() {
         ])
         .then(function (answer) {
             var query = "INSERT INTO bamazon_DB.products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)"
-            //update products table
+            //update products table with new product
             connection.query(query, [answer.productName, answer.deptName, answer.price, answer.stock], function (error) {
                     if (error) throw err;
                     //console log success message
